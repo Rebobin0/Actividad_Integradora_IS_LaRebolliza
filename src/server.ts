@@ -1,15 +1,21 @@
 import express from 'express'
+import router from './router'
+import db from './config/db'
 
+// Conexion a BD
+async function connectDB() {
+    try {
+        await db.authenticate()
+        db.sync()
+        console.log('Conexion a la BD exitosa')
+    } catch (error) {
+        console.log(error)
+        console.log('Hubo un error al conectar a la BD')
+    }
+}
+
+connectDB()
 const server = express()
-
-//Routing
-server.get('/', (req, res) => {
-    const datos = [
-        { id: 1, nombre: 'Emiliano' },
-        { id: 2, nombre: 'Gaspar' },
-    ]
-
-    res.send(datos)
-})
+server.use('/api/products', router)
 
 export default server
