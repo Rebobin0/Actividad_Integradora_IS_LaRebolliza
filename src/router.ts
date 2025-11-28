@@ -1,25 +1,60 @@
 import { Router } from 'express'
+import { body, param } from 'express-validator'
+import { createProduct, deleteProduct, getProductById, getProducts, updateAvailability, updateProduct } from './handlers/product'
+import { handleInputErrors } from './middleware'
 
 const router = Router()
 //Routing
-router.get('/', (req, res) => {
-    res.json('Desde GET')
-})
+router.get('/', getProducts)
 
-router.post('/', (req, res) => {
-    res.json('Desde POST')
-})
+router.get('/:id', 
+    param('id')
+        .isInt().withMessage('El ID no valido'),
+    handleInputErrors,
+    getProductById
+)
 
-router.put('/', (req, res) => {
-    res.json('Desde PUT')
-})
+router.post('/',
+    // Validaciones
+    body('name')
+        .notEmpty().withMessage('El nombre es obligatorio'),
+    body('price')
+        .isNumeric().withMessage('El precio debe ser un numero')
+        .notEmpty().withMessage('El precio es obligatorio')
+        .custom(value => value > 0).withMessage('El precio debe ser mayor a 0'),
+    handleInputErrors,
+    createProduct
+)
 
-router.patch('/', (req, res) => {
-    res.json('Desde PATCH')
-})
+router.put('/:id', 
+    // Validaciones
+    body('name')
+        .notEmpty().withMessage('El nombre es obligatorio'),
+    body('price')
+        .isNumeric().withMessage('El precio debe ser un numero')
+        .notEmpty().withMessage('El precio es obligatorio')
+        .custom(value => value > 0).withMessage('El precio debe ser mayor a 0'),
+    body('availability')
+        .notEmpty().withMessage('La disponibilidad es obligatoria')
+        .isBoolean().withMessage('La disponibilidad debe ser true o false'),
+    param('id')
+        .isInt().withMessage('El ID no valido'),
+    handleInputErrors,
+    updateProduct
+)
 
-router.delete('/', (req, res) => {
-    res.json('Desde DELETE')
-})
+router.patch('/:id', 
+    param('id')
+        .isInt().withMessage('El ID no valido'),
+    handleInputErrors,
+    updateAvailability
+)
+
+router.delete('/:id', 
+    param('id')
+        .isInt().withMessage('El ID no valido'),
+    handleInputErrors,
+    deleteProduct
+)
 
 export default router

@@ -1,14 +1,17 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2016",
+    "module": "nodenext",
+    "target": "esnext",
+    "moduleResolution": "nodenext",
     "sourceMap": true,
     "strict": false,
     "outDir": "./dist",
     "rootDir": "./src",
     "lib": ["ESNext"],
     "esModuleInterop": true,
-    "declaration": true
+    "declaration": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": ["src/**/*.ts"]
 }
