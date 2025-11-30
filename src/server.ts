@@ -3,11 +3,11 @@ import router from './router'
 import db from './config/db'
 
 // Conexion a BD
-async function connectDB() {
+export async function connectDB() {
     try {
         await db.authenticate()
         db.sync()
-        console.log('Conexion a la BD exitosa')
+        //console.log('Conexion a la BD exitosa')
     } catch (error) {
         console.log(error)
         console.log('Hubo un error al conectar a la BD')
@@ -23,5 +23,9 @@ const server = express()
 server.use(express.json())
 
 server.use('/api/products', router)
+
+server.get('/api', (req, res) => {
+    res.json({msg: 'Desde Api'})
+})
 
 export default server
