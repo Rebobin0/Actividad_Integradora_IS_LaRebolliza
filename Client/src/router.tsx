@@ -4,10 +4,14 @@ import Products, {loader as productsloader, action as updateAvailabilityAction} 
 import NewProducts, {action as newproductaction} from './Views/newproduct';
 import EditProducts, {loader as editproductloader, action as editProductAction} from './Views/editproduct';
 import { action as deleteProductAction } from './components/productdetails';
+import Login from './Views/login';
+import { requireAuth } from './Utils/auth';
 export const router = createBrowserRouter([
+    { path: "/login", element: <Login /> },
     {
         path: '/',
         element: <Layout/>,
+        loader: requireAuth,
         children: [
             {
                 index: true,

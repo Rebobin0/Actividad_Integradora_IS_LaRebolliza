@@ -5,6 +5,7 @@ import cors, {CorsOptions} from 'cors'
 import morgan from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 import swaggerSpec, { swaggerUIOptions } from './config/swagger'
+import { login } from './handlers/auth'
 
 // Conexion a BD
 export async function connectDB() {
@@ -25,17 +26,26 @@ const server = express()
 
 //Permitir conexiones CORS
 const corsOptions: CorsOptions = {
-    origin: function (origin, callback) {
-        if(origin === process.env.FRONTEND_URL) {
-            console.log('CORS permitido para: ' + origin)
-            callback(null, true)
-        } else {
-            
-            callback(new Error('CORS no permitido'))
-        }
+  origin: function (origin, callback) {
+    // permitir peticiones directas desde herramientas (curl, Postman) que no envían Origin
+    if (!origin) return callback(null, true);
+
+    const allowed = [
+      'http://localhost:5173', // Vite dev server
+      'http://127.0.0.1:5173'
+      // agrega otros orígenes si los necesitas (ej: dominios de staging)
+    ];
+
+    if (allowed.includes(origin)) {
+      console.log('CORS permitido para:', origin);
+      callback(null, true);
+    } else {
+      console.warn('CORS rechazado para:', origin);
+      callback(new Error('CORS no permitido'));
     }
-    //methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
-}
+  },
+  credentials: true, // si usas cookies de sesión
+};
 server.use(cors(corsOptions))
 
 // Leer datos de forms
@@ -43,7 +53,11 @@ server.use(express.json())
 
 server.use(morgan('dev'))
 
-server.use('/api/products', router)
+server.post('/api/login', login);
+
+// Montas el router de productos en /api/products
+server.use('/api/products', router);
+
 
 //DOCS
 server.use('/docs', swaggerUi.serve)

@@ -1,9 +1,13 @@
 import { Router } from 'express'
 import { body, param } from 'express-validator'
+import morgan from 'morgan'
 import { createProduct, deleteProduct, getProductById, getProducts, updateAvailability, updateProduct } from './handlers/product'
 import { handleInputErrors } from './middleware'
+import { login } from './handlers/auth'
 
 const router = Router()
+
+router.post('/api/login', login);
 /**
  * @swagger
  * components:
